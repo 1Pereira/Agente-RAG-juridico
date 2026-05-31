@@ -1,0 +1,18 @@
+# Ambientes Virtuais
+venv/
+env/
+.env
+
+# Arquivos de Cache e Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Bancos de Dados e Dados Sensíveis
+chroma_db/
+dados/
+app.log
+
+# Mac/Windows
+.DS_Store
+Thumbs.db
