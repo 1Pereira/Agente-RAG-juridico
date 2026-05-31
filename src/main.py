@@ -51,5 +51,5 @@ async def fazer_pergunta(request: PerguntaRequest):
         )
 
 if __name__ == "__main__":
-    logger.info("🚀 Iniciando o servidor da API na porta 8000...")
+    logger.info("Iniciando o servidor da API na porta 8000...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
