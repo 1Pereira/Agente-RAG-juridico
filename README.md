@@ -1,198 +1,197 @@
-# API de Agente RAG Jurídico
- 
-> Agente de IA autônomo para análise de contratos jurídicos com arquitetura baseada em grafos de estado.
- 
+# Legal RAG Agent API
+
+> An autonomous AI agent for legal contract analysis built on a state graph architecture.
+
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![LangGraph](https://img.shields.io/badge/LangGraph-LangChain-1C3C3C?style=flat-square)
-![ChromaDB](https://img.shields.io/badge/ChromaDB-Vetorial-orange?style=flat-square)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_DB-orange?style=flat-square)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Gemini_2.5_Flash-Google_AI-4285F4?style=flat-square&logo=google&logoColor=white)
- 
----
-## Descrição do Projeto
-
-Este projeto implementa uma API RESTful corporativa que atua como um Agente de Inteligência Artificial especializado na análise de contratos jurídicos.
-
-Diferente de pipelines RAG (Retrieval-Augmented Generation) lineares tradicionais, este sistema utiliza uma arquitetura baseada em Grafos de Estado (LangGraph) para conceder autonomia lógica ao LLM. O agente atua como um auditor rigoroso, avaliando a relevância dos documentos recuperados antes de gerar a resposta, bloqueando ativamente alucinações caso a informação solicitada não conste na base de dados.
-
-O sistema possui um pipeline de ingestão em lote com processamento de metadados, permitindo buscas híbridas (vetorial + filtros SQL-like), e está totalmente conteinerizado para deploy em ambientes de produção.
 
 ---
 
-# Arquitetura e Tecnologias Utilizadas
+## Project Description
 
-* **Linguagem Principal:** Python 3.11+
-* **Framework de API:** FastAPI e Uvicorn
-* **Orquestração de Agentes:** LangChain e LangGraph
-* **Banco de Dados Vetorial:** ChromaDB (Local)
+This project implements a corporate RESTful API that acts as an AI Agent specialized in legal contract analysis.
 
-## Modelos de IA
+Unlike traditional linear RAG (Retrieval-Augmented Generation) pipelines, this system uses a State Graph architecture (LangGraph) to give the LLM logical autonomy. The agent acts as a strict auditor, evaluating the relevance of retrieved documents before generating a response and actively blocking hallucinations when the requested information is not present in the knowledge base.
 
-* **Embeddings:** HuggingFace (Open-source)
-* **LLM:** Google Gemini 2.5 Flash
-
-## Infraestrutura
-
-* Docker
-
-## Qualidade e Testes
-
-* Pytest
-* Logging nativo do Python
+The system includes a batch ingestion pipeline with metadata processing, enabling hybrid searches (vector similarity + SQL-like filters), and is fully containerized for production deployment.
 
 ---
 
-# Estrutura do Projeto
+## Architecture and Technologies
+
+- **Primary Language:** Python 3.11+
+- **API Framework:** FastAPI and Uvicorn
+- **Agent Orchestration:** LangChain and LangGraph
+- **Vector Database:** ChromaDB (Local)
+
+### AI Models
+
+- **Embeddings:** HuggingFace (Open-source)
+- **LLM:** Google Gemini 2.5 Flash
+
+### Infrastructure
+
+- Docker
+
+### Quality and Testing
+
+- Pytest
+- Python native logging
+
+---
+
+## Project Structure
 
 ```plaintext
 .
-├── chroma_db/               # Banco de dados vetorial persistente (gerado automaticamente)
-├── dados/                   # Diretório fonte para os arquivos PDF em formato bruto
-├── src/                     # Código fonte principal
-│   ├── agent/               # Lógica do Agente Autônomo
-│   │   ├── graph.py         # Definição do fluxo LangGraph (Roteamento)
-│   │   ├── nodes.py         # Funções de execução (Recuperação, Avaliação, Geração)
-│   │   └── state.py         # Definição do estado global do agente
-│   ├── database/            # Pipeline de Dados e Persistência
-│   │   ├── chroma_client.py # Conexão e configuração do banco vetorial
-│   │   └── ingestion.py     # Script de processamento em lote e extração de metadados
-│   └── main.py              # Ponto de entrada da API e configuração de rotas
-├── tests/                   # Suite de testes automatizados
+├── chroma_db/               # Persistent vector database (auto-generated)
+├── dados/                   # Source directory for raw PDF files
+├── src/                     # Main source code
+│   ├── agent/               # Autonomous Agent logic
+│   │   ├── graph.py         # LangGraph flow definition (Routing)
+│   │   ├── nodes.py         # Execution functions (Retrieval, Evaluation, Generation)
+│   │   └── state.py         # Global agent state definition
+│   ├── database/            # Data Pipeline and Persistence
+│   │   ├── chroma_client.py # Vector database connection and configuration
+│   │   └── ingestion.py     # Batch processing script and metadata extraction
+│   └── main.py              # API entry point and route configuration
+├── tests/                   # Automated test suite
 │   ├── __init__.py
-│   └── test_api.py          # Testes de integração da rota principal
-├── .env                     # Variáveis de ambiente (não versionado)
-├── .dockerignore            # Regras de exclusão para o build da imagem Docker
-├── Dockerfile               # Receita de infraestrutura para conteinerização
-└── requirements.txt         # Dependências do projeto
+│   └── test_api.py          # Integration tests for the main route
+├── .env                     # Environment variables (not versioned)
+├── .dockerignore            # Exclusion rules for Docker image build
+├── Dockerfile               # Infrastructure recipe for containerization
+└── requirements.txt         # Project dependencies
 ```
 
 ---
 
-# Fluxo Lógico do Agente (LangGraph)
+## Agent Logic Flow (LangGraph)
 
-O processamento cognitivo da API segue três etapas rigorosas de avaliação:
+The API's cognitive processing follows three strict evaluation steps.
 
-## 1. Nó de Recuperação (Retrieve)
+### 1. Retrieval Node
 
-Realiza uma busca híbrida no ChromaDB, cruzando:
+Performs a hybrid search in ChromaDB, combining:
 
-* Similaridade vetorial da pergunta
-* Metadados extraídos no pipeline de ingestão
+- Vector similarity of the question
+- Metadata extracted during the ingestion pipeline
 
-Exemplos de metadados:
+Metadata examples:
 
-* Status do contrato
-* Tipo de documento
-* Categoria jurídica
-
----
-
-## 2. Nó de Avaliação (Grade Documents)
-
-O LLM atua como um juiz interno.
-
-Ele recebe os fragmentos recuperados e avalia, de forma binária (`sim/não`), se os textos contêm informações suficientes para responder à pergunta.
-
-* Fragmentos úteis → aprovados
-* Fragmentos irrelevantes → descartados
+- Contract status
+- Document type
+- Legal category
 
 ---
 
-## 3. Nó de Geração (Generate)
+### 2. Evaluation Node (Grade Documents)
 
-Recebe apenas o contexto aprovado pela etapa anterior.
+The LLM acts as an internal judge.
 
-### Cenários possíveis
+It receives the retrieved fragments and evaluates, in a binary manner (yes/no), whether the texts contain sufficient information to answer the question.
 
-#### Caso exista contexto válido:
-
-O agente formula a resposta jurídica estruturada.
-
-#### Caso o contexto esteja vazio:
-
-A trava de segurança é acionada e o sistema retorna que a informação não consta na base de dados.
+- Useful fragments are approved
+- Irrelevant fragments are discarded
 
 ---
 
-# Como Executar Localmente (Ambiente de Desenvolvimento)
+### 3. Generation Node
 
-## 1. Pré-requisitos
+Receives only the context approved in the previous step.
 
-* Python 3.11 ou superior
-* Conta no Google AI Studio para geração da API Key
+#### Possible scenarios
+
+**If valid context exists:**
+The agent formulates a structured legal response.
+
+**If context is empty:**
+The safety lock is triggered and the system returns that the information is not present in the knowledge base.
 
 ---
 
-## 2. Instalação e Configuração
+## Running Locally (Development Environment)
 
-Clone o repositório:
+### Prerequisites
+
+- Python 3.11 or higher
+- Google AI Studio account for API key generation
+
+---
+
+### Installation and Setup
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/1Pereira/Agente-RAG-juridico.git
 cd Agente-RAG-juridico
 ```
 
-Crie e ative um ambiente virtual:
+Create and activate a virtual environment:
 
-### Windows
+**Windows**
 
 ```bash
 python -m venv venv
 source venv/Scripts/activate
 ```
 
-### Linux/macOS
+**Linux/macOS**
 
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
-Instale as dependências:
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Crie um arquivo `.env` na raiz do projeto:
+Create a `.env` file in the project root:
 
 ```env
-GEMINI_API_KEY=sua_chave_aqui
+GEMINI_API_KEY=your_key_here
 ```
 
 ---
 
-# 3. Ingestão de Dados
+### Data Ingestion
 
-Adicione os arquivos `.pdf` dentro da pasta `dados/`.
+Add your `.pdf` files inside the `dados/` folder.
 
-Depois execute o pipeline de ingestão:
+Then run the ingestion pipeline:
 
 ```bash
 cd src/database
 python ingestion.py
 ```
 
-O script irá:
+The script will:
 
-* Processar os PDFs
-* Extrair metadados
-* Gerar embeddings
-* Popular o ChromaDB
+- Process the PDFs
+- Extract metadata
+- Generate embeddings
+- Populate ChromaDB
 
 ---
 
-# 4. Iniciando a API
+### Starting the API
 
-Volte para a raiz do projeto:
+Return to the project root:
 
 ```bash
 cd ../..
 python src/main.py
 ```
 
-A API ficará disponível em:
+The API will be available at:
 
 ```plaintext
 http://localhost:8000
@@ -200,17 +199,17 @@ http://localhost:8000
 
 ---
 
-# Como Executar via Docker (Ambiente de Produção)
+## Running via Docker (Production Environment)
 
-O projeto possui um `Dockerfile` configurado para garantir execução isolada e reproduzível.
+The project includes a configured `Dockerfile` for isolated and reproducible execution.
 
-## Construindo a imagem
+### Building the image
 
 ```bash
 docker build -t agente-rag-api .
 ```
 
-## Executando o container
+### Running the container
 
 ```bash
 docker run -p 8000:8000 --env-file .env agente-rag-api
@@ -218,38 +217,34 @@ docker run -p 8000:8000 --env-file .env agente-rag-api
 
 ---
 
-# Referência da API
+## API Reference
 
-## Endpoint Principal
+### Main Endpoint
 
-### `POST /perguntar`
+#### `POST /perguntar`
 
----
-
-## Corpo da Requisição
+**Request body**
 
 ```json
 {
-  "pergunta": "Qual a porcentagem da multa de rescisão?"
+  "pergunta": "What is the termination penalty percentage?"
+}
+```
+
+**Example response**
+
+```json
+{
+  "pergunta": "What is the termination penalty percentage?",
+  "resposta": "The termination penalty described in the service agreement is 5% of the total remaining contract value."
 }
 ```
 
 ---
 
-## Exemplo de Resposta
+### Swagger UI
 
-```json
-{
-  "pergunta": "Qual a porcentagem da multa de rescisão?",
-  "resposta": "A multa de rescisão descrita no contrato de prestação de serviços é de 5% sobre o valor total remanescente."
-}
-```
-
----
-
-# Swagger UI
-
-A documentação interativa pode ser acessada em:
+Interactive documentation is available at:
 
 ```plaintext
 http://localhost:8000/docs
@@ -257,18 +252,18 @@ http://localhost:8000/docs
 
 ---
 
-# Suite de Testes
+## Test Suite
 
-O projeto utiliza `pytest` para validação das rotas e comportamento da API.
+The project uses `pytest` to validate routes and API behavior.
 
-Os testes simulam:
+Tests simulate:
 
-* Requisições HTTP completas
-* Validação do JSON de saída
-* Tempo de resposta
-* Integridade das chaves retornadas
+- Complete HTTP requests
+- JSON output validation
+- Response time
+- Integrity of returned keys
 
-## Executando os testes
+### Running the tests
 
 ```bash
 pytest -q --disable-warnings
@@ -276,41 +271,39 @@ pytest -q --disable-warnings
 
 ---
 
-# Monitoramento e Logs
+## Monitoring and Logs
 
-A aplicação possui um sistema de logging nativo configurado.
+The application has a native logging system configured.
 
-Os seguintes eventos são registrados:
+The following events are recorded:
 
-* Requisições recebidas
-* Transições entre nós do LangGraph
-* Erros críticos de infraestrutura
-* Exceções tratadas via `try/except`
+- Incoming requests
+- LangGraph node transitions
+- Critical infrastructure errors
+- Handled exceptions via `try/except`
 
-## Saídas de log
+### Log outputs
 
-* Console em tempo real
-* Arquivo persistente:
+- Real-time console output
+- Persistent log file:
 
 ```plaintext
 app.log
 ```
 
-Isso permite rastreabilidade, auditoria e monitoramento operacional do agente.
+This enables traceability, auditing and operational monitoring of the agent.
 
 ---
 
-# Características Técnicas do Projeto
+## Technical Highlights
 
-* Arquitetura baseada em agentes autônomos
-* Proteção contra alucinações do LLM
-* Busca híbrida vetorial + metadados
-* Pipeline de ingestão automatizado
-* Persistência vetorial local
-* API RESTful corporativa
-* Conteinerização com Docker
-* Estrutura modular e escalável
-* Logging e observabilidade
-* Testes automatizados
-
----
+- Autonomous agent architecture
+- LLM hallucination protection
+- Hybrid vector + metadata search
+- Automated ingestion pipeline
+- Local vector persistence
+- Corporate RESTful API
+- Docker containerization
+- Modular and scalable structure
+- Logging and observability
+- Automated testing
